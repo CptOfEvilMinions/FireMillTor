@@ -1,0 +1,64 @@
+##############################################################
+# Install Osquery
+##############################################################
+- name: Add Osquery GPG key
+  apt_key:
+    id: "{{ osquery_gpg_key }}"
+    keyserver: keyserver.ubuntu.com
+
+- name: Add Osquery repository into sources list
+  apt_repository:
+    repo: "{{ osquery_repo_url }}"
+    state: present
+
+- name: Install Osquery
+  apt: 
+    name: 'osquery'
+    state: latest
+
+##############################################################
+# Config Osquery
+##############################################################
+- name: Copy osquery.flags
+  template:
+    src: 'conf/osquery/osquery.flags'
+    dest: '/etc/osquery/osquery.flags'
+    owner: 'root'
+    group: 'root'
+    mode: 0600
+
+- name: Copy osquery.conf
+  template:
+    src: 'conf/osquery/osquery.conf'
+    dest: '/etc/osquery/osquery.conf'
+    owner: 'root'
+    group: 'root'
+    mode: 0600
+
+- name: Restart Osquery
+  service:
+    name: 'osqueryd'
+    enabled: yes
+    state: restarted
+
+##############################################################
+# Enable Osquery Filebeat module
+##############################################################    
+- name: Check status of osquery filebeat module
+  stat:
+    path: '/etc/filebeat/modules.d/osquery.yml'
+  register: osquery_filebeat_module_status
+
+- name: Enable Osquery Filebeat module
+  copy:
+    src: '/etc/filebeat/modules.d/osquery.yml.disabled'
+    dest: '/etc/filebeat/modules.d/osquery.yml'
+    remote_src: yes
+  when: not osquery_filebeat_module_status.stat.exists
+
+- name: Restart Filebeat
+  service:
+    name: 'filebeat'
+    enabled: yes
+    state: restarted
+  when: not osquery_filebeat_module_status.stat.exists

@@ -1,0 +1,8 @@
+########################################### General ###########################################
+hostname: 'tor'
+timezone: 'Etc/UTC'
+monitoring_interface: 'ens3'
+
+########################################### Docker ###########################################
+docker_gpg_key_url: 'https://download.docker.com/linux/ubuntu/gpg'  
+docker_repo_url: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu    focal    stable'

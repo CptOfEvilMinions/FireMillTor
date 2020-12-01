@@ -1,0 +1,115 @@
+# Log Files are important, I just log notices. Look at the help for further debug levels
+Log notice file /var/log/tor/notices.log
+
+#This is the port ARM will connect to for an admin view of your tor service
+#ControlPort 9050
+SocksPort 127.0.0.1:9051
+CookieAuthentication 0
+
+#The port TOR uses to advertise for incoming connections
+ORPort 9001
+
+# A handle for your relay, so people don't have to refer to it by key.
+Nickname beefyboi
+
+#Administrative contact for those with complaints may be able to contact you at. This will go a long way to keeping your tor exit node alive and running.
+ContactInfo holdmybeertor@protonmail.com
+
+# Bandwidth
+RelayBandwidthRate 20 MB
+RelayBandwidthBurst 50 MB
+AccountingStart day  0:00
+AccountingMax 500 GBytes
+
+
+# Web page that greats a user on port 80 informing they have stumbled on a tor exit node.
+## You can get this page by
+### wget https://svn.torproject.org/svn/tor/branches/hidserv-perf/contrib/tor-exit-notice.html -O /etc/tor/tor-exit-notice.html
+DirPortFrontPage /etc/tor/tor-exit-notice.html
+
+ExitPolicy reject 0.0.0.0/8
+ExitPolicy reject 169.254.0.0/16
+ExitPolicy reject 127.0.0.0/8
+ExitPolicy reject 192.168.0.0/16
+ExitPolicy reject 10.0.0.0/8
+ExitPolicy reject 172.16.0.0/12
+ExitPolicy accept *:20-21     # FTP - File Transfer Protocol (data / control)
+ExitPolicy accept *:22        # SSH
+ExitPolicy accept *:23        # Telnet
+ExitPolicy accept *:43        # WHOIS - who is query and response protocol
+ExitPolicy accept *:53        # DNS - Domain Name System
+ExitPolicy accept *:79        # finger - Name/Finger user information protocol
+ExitPolicy accept *:80-81     # HTTP - Hypertext Transfer Protocol / web browsing
+ExitPolicy accept *:88        # kerberos - computer network authentication protocol
+ExitPolicy accept *:110       # POP3 - Post Office Protocol v3 (receive email only)
+ExitPolicy accept *:143       # IMAP - Internet Message Access Protocol, management of email messages (receive email only)
+ExitPolicy accept *:194       # IRC
+ExitPolicy accept *:220       # IMAP3 - Internet Message Access Protocol v3 (receive email only)
+ExitPolicy accept *:389       # LDAP - Lightweight Directory Access Protocol
+ExitPolicy accept *:443       # HTTPS - Hypertext Transfer Protocol over TLS/SSL / secure web browsing
+ExitPolicy accept *:445       # SMB - Server Message Block
+ExitPolicy accept *:464       # kpasswd - Kerberos Change/Set password
+ExitPolicy accept *:465       # URD for SSM (more often: an alternative SUBMISSION port, see 587)
+ExitPolicy accept *:531       # IRC/AIM - AOL Instant Messenger
+ExitPolicy accept *:543-544   # Kerberos - klogin, Kerberos login / kshell, Kerberos Remote shell
+ExitPolicy accept *:554       # RTSP - Real Time Streaming Protocol
+ExitPolicy accept *:563       # NNTP over SSL
+ExitPolicy accept *:587       # SUBMISSION (authenticated clients [MUA's like Thunderbird] send mail over STARTTLS SMTP here)
+ExitPolicy accept *:636       # LDAP - Lightweight Directory Access Protocol over TLS/SSL
+ExitPolicy accept *:706       # SILC - Secure Internet Live Conferencing
+ExitPolicy accept *:749       # kerberos - protocol administration
+ExitPolicy accept *:853       # DNS over TLS
+ExitPolicy accept *:873       # rsync - file synchronization protocol
+ExitPolicy accept *:902-904   # VMware - Virtual Infrastructure Client / Console / Server
+ExitPolicy accept *:981       # Remote HTTPS management for firewall
+ExitPolicy accept *:989-990   # FTP over TLS/SSL - File Transfer Protocol (data / control)
+ExitPolicy accept *:991       # Netnews Administration System
+ExitPolicy accept *:992       # Telnet protocol over TLS/SSL
+ExitPolicy accept *:993       # IMAP over SSL - Internet Message Access Protocol over TLS/SSL (receive email only)
+ExitPolicy accept *:995       # POP3 over SSL - Post Office Protocol v3 (receive email only)
+ExitPolicy accept *:1194      # OpenVPN - Virtual Private Network
+ExitPolicy accept *:1220      # QT Server Admin - QuickTime Streaming Server administration
+ExitPolicy accept *:1293      # PKT-KRB-IPSec - Internet Protocol Security
+ExitPolicy accept *:1500      # VLSI License Manager - Firewall (NT4-based) Remote Management / Server
+ExitPolicy accept *:1533      # Sametime - IM—Virtual Places Chat MS SQL Server
+ExitPolicy accept *:1677      # GroupWise - clients in client/server access mode
+ExitPolicy accept *:1723      # PPTP - Point-to-Point Tunneling Protocol
+ExitPolicy accept *:1755      # RTSP - Media Services (MMS, ms-streaming)
+ExitPolicy accept *:1863      # MSNP - MS Notification Protocol, MS Messenger service / Instant Messaging clients
+ExitPolicy accept *:2083      # Secure Radius Service (radsec) and CPanel default SSL
+ExitPolicy accept *:2086-2087 # GNUnet, ELI - Web Host Manager default and Web Host Manager default SSL
+ExitPolicy accept *:2095-2096 # NBX - CPanel default web mail and CPanel default SSL web mail
+ExitPolicy accept *:2102-2104 # Zephyr - Project Athena Notification Service server / connection / host manager
+ExitPolicy accept *:3128      # SQUID
+ExitPolicy accept *:3389      # MS WBT
+ExitPolicy accept *:3690      # SVN - Subversion version control system
+ExitPolicy accept *:4321      # RWHOIS - Referral Who is Protocol
+ExitPolicy accept *:4643      # Virtuozzo
+ExitPolicy accept *:5050      # MMCC - Yahoo! Messenger
+ExitPolicy accept *:5190      # ICQ and AOL Instant Messenger
+ExitPolicy accept *:5222-5223 # XMPP, XMPP over SSL - Extensible Messaging and Presence Protocol client connection
+ExitPolicy accept *:5228      # Android Market - Google Play, Android Cloud, Google Cloud Messaging / HP Virtual Room Service
+ExitPolicy accept *:5900      # VNC
+ExitPolicy accept *:6660-6669 # IRC
+ExitPolicy accept *:6679      # IRC SSL
+ExitPolicy accept *:6697      # IRC SSL
+ExitPolicy accept *:8000      # iRDMI
+ExitPolicy accept *:8008      # HTTP alternate / Server administration default
+ExitPolicy accept *:8074      # Gadu-Gadu - instant messaging client
+ExitPolicy accept *:8080      # HTTP Proxies
+ExitPolicy accept *:8082      # HTTPS Electrum Bitcoin port
+ExitPolicy accept *:8087-8088 # Simplify Media SPP Protocol, Radan HTTP - Control Panel
+ExitPolicy accept *:8232-8233 # Zcash
+ExitPolicy accept *:8332-8333 # Bitcoin
+ExitPolicy accept *:8443      # PCsync HTTPS - Plesk Control Panel, Apache Tomcat SSL
+ExitPolicy accept *:8888      # HTTP Proxies, NewsEDGE - HyperVM, Freenet, MAMP Server
+ExitPolicy accept *:9418      # git - Git pack transfer service
+ExitPolicy accept *:9999      # distinct
+ExitPolicy accept *:10000     # Network Data Management Protocol - Webmin, Web-based Unix/Linux system administration tool
+ExitPolicy accept *:11371     # OpenPGP hkp (http keyserver protocol)
+ExitPolicy accept *:19294     # Google Voice TCP - Voice and Video connections
+ExitPolicy accept *:19638     # Ensim control panel
+ExitPolicy accept *:50002     # Electrum Bitcoin SSL
+ExitPolicy accept *:64738     # Mumble - voice over IP
+ExitPolicy reject *:*
+ExitRelay 1

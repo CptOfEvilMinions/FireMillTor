@@ -1,0 +1,319 @@
+##################################################################################
+# Install deps
+##################################################################################
+- name: Install software
+  apt:
+    name: ['cmake', 'make', 'gcc', 'g++', 'flex', 'bison', 'libpcap-dev', 'libssl-dev', 'python-dev', 'swig', 'zlib1g-dev', 'libmaxminddb-dev','curl', 'libkrb5-dev', 'acl']
+    state: latest
+
+##################################################################################
+# Download zeek
+##################################################################################
+- name: Stat zeek
+  stat:
+    path: '{{ zeek_dir }}'
+  register: zeek_tar_stat
+
+- name: Download zeek
+  get_url:
+    url: '{{ zeek_tar_url }}'
+    dest: /tmp/zeek-{{ zeek_version }}.tar.gz
+  when: not zeek_tar_stat.stat.exists
+
+- name: Create {{ zeek_build_dir }}
+  file:
+    path: '{{ zeek_build_dir }}'
+    state: directory
+    owner: root
+    group: root
+  when: not zeek_tar_stat.stat.exists
+
+- name: Unarchive {{ zeek_version }}.tar.gz
+  unarchive:
+    src: /tmp/zeek-{{ zeek_version }}.tar.gz
+    dest: '{{ zeek_build_dir }}'
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+  when: not zeek_tar_stat.stat.exists
+
+##############################################################
+# Compile Zeek
+##############################################################
+- name: Stat zeek
+  stat:
+    path: '{{ zeek_dir }}/bin/zeek'
+  register: zeek_bin_stat
+
+- name: 'Execute ./configure'
+  shell: './configure --with-pcap={{ pfring_dir }} --prefix={{ zeek_dir }}'
+  args:
+    chdir: '{{ zeek_build_dir }}'
+  when: not zeek_bin_stat.stat.exists
+
+- name: Make
+  community.general.make:
+    chdir: '{{ zeek_build_dir }}'
+  when: not zeek_bin_stat.stat.exists
+
+- name: Make install
+  community.general.make:
+    chdir: '{{ zeek_build_dir }}'
+    target: install
+  when: not zeek_bin_stat.stat.exists
+
+##################################################################################
+# Enable Zeek user to capture packets
+# https://www.ericooi.com/zeekurity-zen-part-i-how-to-install-zeek-on-centos-8/
+##################################################################################
+- name: Create Zeek group
+  group:
+    name: '{{ zeek_user }}'
+    state: present
+
+- name: Create Zeek user
+  user:
+    name: '{{ zeek_user }}'
+    groups: '{{ zeek_user }}'
+    shell: /sbin/nologin
+    append: yes
+    comment: "{{ zeek_user }} nologin User"
+    state: present
+
+- name: Set Zeek directory perms to Zeek user
+  file:
+    state: directory
+    path: '{{ zeek_dir }}'
+    owner: '{{ zeek_user }}'
+    group: '{{ zeek_user }}'
+    mode: 0750
+    recurse: true
+
+- name: Allow Zeek user ability to capture packets
+  community.general.capabilities:
+    path: "{{ item.binary }}"
+    capability: "{{ item.permission }}"
+    state: present
+  with_items:
+    - {'permission': 'cap_net_raw=eip', 'binary': '{{ zeek_dir }}/bin/zeek'}
+    - {'permission': 'cap_net_raw=eip', 'binary': '{{ zeek_dir }}/bin/capstats'}
+
+##################################################################################
+# Configure Zeek
+##################################################################################
+- name: Node.cfg backup
+  copy:
+    src: '{{ zeek_dir }}/etc/node.cfg'
+    dest: '{{ zeek_dir }}/etc/node.cfg.bak'
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0400'
+
+- name: Copy node.cfg
+  template:
+    src: 'conf/zeek/node.cfg'
+    dest: '{{ zeek_dir }}/etc/node.cfg'
+    owner: '{{ zeek_user }}'
+    group: '{{ zeek_user }}'
+    mode: '0600'
+
+- name: networks.cfg backup
+  copy:
+    src: '{{ zeek_dir }}/etc/networks.cfg'
+    dest: '{{ zeek_dir }}/etc/networks.cfg.bak'
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0400'
+
+- name: Get public IP
+  uri:
+    url: 'https://api.ipify.org?format=json'
+    return_content: yes
+  register: json_response
+  failed_when: "'ip' not in json_response.content"
+
+- name: Print public IP
+  debug:
+    msg: '{{ json_response.json }}'
+
+- name: Copy networks.cfg 
+  template:
+    src: 'conf/zeek/networks.cfg'
+    dest: '{{ zeek_dir }}/etc/networks.cfg'
+    owner: '{{ zeek_user }}'
+    group: '{{ zeek_user }}'
+    mode: '0600'
+
+- name: zeekctl.cfg backup
+  copy:
+    src: '{{ zeek_dir }}/etc/zeekctl.cfg'
+    dest: '{{ zeek_dir }}/etc/zeekctl.cfg.bak'
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0400'
+
+- name: Copy zeekctl.cfg
+  template:
+    src: 'conf/zeek/zeekctl111.cfg'
+    dest: '{{ zeek_dir }}/etc/zeekctl111.cfg'
+    owner: '{{ zeek_user }}'
+    group: '{{ zeek_user }}'
+    mode: '0644'
+
+#################################################################################
+# Install/Setup Zeek Package Manager
+#################################################################################
+- name: Install Python3 pip
+  apt:
+    name: 'python3-pip'
+    state: latest
+
+- name: Install zkg
+  pip:
+    name: zkg=={{ zkg_version }}
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ zeek_dir }}/bin"
+
+- name: Setup ZKG
+  shell: 'zkg autoconfig'
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ zeek_dir }}/bin"
+
+- name: Install ZKG packages
+  shell: 'zkg install --force {{ item }}'
+  with_items:
+    - 'corelight/json-streaming-logs'       # https://packages.zeek.org/packages/view/0fd9c242-f435-11e9-9321-0a645a3f3086
+    - 'corelight/bro-long-connections'      # https://packages.zeek.org/packages/view/0facdfb9-f435-11e9-9321-0a645a3f3086
+    - 'sethhall/domain-tld'                 # https://packages.zeek.org/packages/view/1356048d-f435-11e9-9321-0a645a3f3086
+    - 'salesforce/ja3'                      # https://packages.zeek.org/packages/view/132f82af-f435-11e9-9321-0a645a3f3086
+    - 'corelight/top-dns'                   # https://packages.zeek.org/packages/view/0ff20efa-f435-11e9-9321-0a645a3f3086
+    - 'corelight/zeek-community-id'         # https://packages.zeek.org/packages/view/697bba92-7ece-11ea-9321-0a645a3f3086
+    - 'jsiwek/zeek-cryptomining'            # https://packages.zeek.org/packages/view/9a9b4ec4-0501-11ea-9321-0a645a3f3086
+    - 'zeek-sniffpass'                      # https://packages.zeek.org/packages/view/0ffcb17e-f435-11e9-9321-0a645a3f3086
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ zeek_dir }}/bin"
+
+- name: Add Zeek @load
+  lineinfile:
+    path: /opt/zeek/share/zeek/site/local.zeek
+    line: '{{ item }}'
+    create: yes
+  with_items:
+    - '# Load ZKG packages'
+    - '@load packages'
+
+- name: Replace bro_init() with zeek_init()
+  shell: "find {{ zeek_dir }}/share/zeek/site/packages -type f -exec sed -i 's/bro_init()/zeek_init()/g' {} +"
+
+##################################################################################
+# Start Zeek
+##################################################################################
+- name: Set Zeek directory perms to Zeek user
+  file:
+    state: directory
+    path: '{{ zeek_dir }}'
+    owner: '{{ zeek_user }}'
+    group: '{{ zeek_user }}'
+    mode: 0750
+    recurse: true
+    
+- name: Stat Zeekctl install
+  stat:
+    path: '{{ zeek_dir }}/spool/zeekctl-config.sh'
+  register: zeekctl_install
+
+- name: Zeekctl install
+  shell: '{{ zeek_dir }}/bin/zeekctl install'
+  args:
+    chdir: '{{ zeek_dir }}'
+  become_method: su
+  become: yes
+  become_user: '{{ zeek_user }}'
+  when: not zeekctl_install.stat.exists
+
+- name: Stat Zeekctl status
+  stat:
+    path: '/opt/zeek/logs/current/.pid'
+  register: zeekctl_status
+
+- name: Zeekctl deploy
+  shell: '{{ zeek_dir }}/bin/zeekctl deploy'
+  args:
+    chdir: '{{ zeek_dir }}'
+  become: yes
+  become_user: '{{ zeek_user }}'
+  when: not zeekctl_status.stat.exists
+
+- name: Zeekctl Start
+  shell: '{{ zeek_dir }}/bin/zeekctl start'
+  args:
+    chdir: '{{ zeek_dir }}'
+  become: yes
+  become_user: '{{ zeek_user }}'
+  when: not zeekctl_status.stat.exists
+
+##################################################################################
+# Zeek service
+# https://www.securitynik.com/2020/06/installing-zeek-314-on-ubuntu-2004.html
+##################################################################################
+- name: Stat zeek service
+  stat:
+    path: '/etc/systemd/system/zeek.service'
+  register: zeek_service
+
+- name: Copy Zeek SystemD service
+  template:
+    src: 'conf/zeek/zeek.service'
+    dest: '/etc/systemd/system/zeek.service'
+    owner: 'root'
+    group: 'root'
+  when: not zeek_service.stat.exists
+    
+- name: Reload SystemD
+  systemd:
+    daemon_reload: yes
+  when: not zeek_service.stat.exists
+
+- name: Restart Zeek
+  service:
+    name: 'zeek'
+    enabled: yes
+    state: restarted
+
+##############################################################
+# Enable Zeek Filebeat module
+##############################################################    
+- name: Check status of Zeek filebeat module
+  stat:
+    path: '/etc/filebeat/modules.d/zeek.yml'
+  register: zeek_filebeat_module_status
+
+- name: Disable Osquery Filebeat module
+  copy:
+    src: '/etc/filebeat/modules.d/zeek.yml'
+    dest: '/etc/filebeat/modules.d/zeek.yml.disabled'
+    remote_src: yes
+  when: zeek_filebeat_module_status.stat.exists
+
+- name: Create Filebeat config directory
+  file:
+    path: '/etc/filebeat/inputs.d'
+    state: directory
+    owner: 'root'
+    group: 'root'
+
+- name: Copy Zeek template
+  template:
+    src: 'conf/zeek/zeek_filebeat_input.yml'
+    dest: '/etc/filebeat/inputs.d/zeek_input.yml'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+
+- name: Restart Filebeat
+  service:
+    name: 'filebeat'
+    enabled: yes
+    state: restarted

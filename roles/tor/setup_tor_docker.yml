@@ -1,0 +1,60 @@
+########################################################################
+# Setup TOR with Docker
+########################################################################
+- name: Install Python Docker
+  pip:
+    name: ['docker-compose', 'docker']
+    
+- name: Check Docker service is running
+  service:
+    name: 'docker'
+    state: started
+
+- name: Create directory for TOR  
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0600
+    owner: root
+    group: root
+  with_items:
+    - '/srv/docker/tor'
+    - '/srv/docker/tor/conf'
+     
+- name: Copy Dockerfile
+  template:
+    src: 'Dockerfile'
+    dest: '/srv/docker/tor/Dockerfile'
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Copy docker-compose
+  template:
+    src: 'docker-compose.yml'
+    dest: '/srv/docker/tor/docker-compose.yml'
+    mode: 0600
+    owner: root
+    group: root
+
+- name: Copy TOR config
+  template:
+    src: 'conf/tor/torrc'
+    dest: '/srv/docker/tor/conf/torrc'
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Copy Tor config
+  template:
+    src: 'conf/tor/torrc'
+    dest: '/srv/docker/tor/conf/torrc'
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Copy Docker-compose
+  community.general.docker_compose:
+    project_name: tor-alpine
+    project_src: '/srv/docker/tor'
+    build: yes

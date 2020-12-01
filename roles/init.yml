@@ -1,0 +1,49 @@
+##################################################################################
+# Set hostname
+##################################################################################
+- name: Set hostname
+  hostname:
+    name: "{{ hostname }}"
+
+- name: add myself to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '^127\.0\.0\.1[ \t]+localhost'
+    line: '127.0.0.1 localhost {{ hostname }}'
+    state: present
+
+##################################################################################
+# Set timezone
+##################################################################################
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+##################################################################################
+# Apply updates
+##################################################################################
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt:
+    update_cache: yes
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+  register: apt_dist_upgrade
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+
+- name: Reboot machine
+  reboot:
+  when: apt_dist_upgrade is changed
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+
+
+- name: Install helpful tools
+  apt:
+    name: ['htop', 'curl', 'net-tools', 'git', 'tcpdump', 'acl']

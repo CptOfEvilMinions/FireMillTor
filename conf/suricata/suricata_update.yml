@@ -1,0 +1,5 @@
+disable-conf: /etc/suricata/disable.conf
+ignore:
+  - "*deleted.rules"
+local:
+  - /etc/suricata/rules/local.rules

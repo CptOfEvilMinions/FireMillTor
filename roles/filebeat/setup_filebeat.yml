@@ -1,0 +1,40 @@
+##############################################################
+# Install Filebeat
+##############################################################
+- name: Add Elastic GPG key
+  apt_key:
+    url: "{{ elastic_gpg_key_url }}"
+    state: present
+
+- name: Add Elastic repository into sources list
+  apt_repository:
+    repo: "{{ elastic_repo_url }}"
+    state: present
+
+- name: Install Filebeat
+  apt:
+    name: 'filebeat={{ filebeat_version }}'
+    state: present
+
+##############################################################
+# Config Filebeat
+##############################################################
+- name: Copy filebeat.yml
+  template:
+    src: 'conf/filebeat/filebeat.yml'
+    dest: '/etc/filebeat/filebeat.yml'
+    owner: 'root'
+    group: 'root'
+    mode: 0600
+
+# - name: Copy intermediate certificate
+
+# - name: Copy Filebeat client public cert
+
+# - name: Copy Filebeat client private key
+
+- name: Restart Filebeat
+  service:
+    name: 'filebeat'
+    enabled: yes
+    state: restarted

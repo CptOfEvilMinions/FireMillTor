@@ -1,0 +1,19 @@
+[Unit]
+Description=Zeek
+After=network.target
+
+[Service]
+User={{ zeek_user }}
+Group={{ zeek_user }}
+ExecStartPre=-{{ zeek_dir }}/bin/zeekctl cleanup
+ExecStartPre={{ zeek_dir }}/bin/zeekctl check
+ExecStartPre={{ zeek_dir }}/bin/zeekctl install
+ExecStart={{ zeek_dir }}/bin/zeekctl start
+ExecStop={{ zeek_dir }}/bin/zeekctl stop
+RestartSec=10s
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target

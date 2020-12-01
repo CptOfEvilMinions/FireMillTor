@@ -1,0 +1,1 @@
+alert http any any -> any any (msg:"Detected Emotet POST payload"; flow:established,to_server; content:"POST "; pcre:"/[a-zA-Z0-9]{5,20}=[a-zA-Z0-9]{5}?/"; reference:url,www.malware-traffic-analysis.net/2020/01/17/index.html; sid:1212121; rev:1;)

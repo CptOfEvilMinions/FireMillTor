@@ -1,0 +1,13 @@
+version: '2.2'
+services:
+  tor:
+    build: .
+    image: firemill-tor
+    container_name: firemill-tor
+    restart: unless-stopped
+    ports:
+      - 9001:9001
+    networks:
+      - default
+    cpus: 2
+    mem_limit: 300M
