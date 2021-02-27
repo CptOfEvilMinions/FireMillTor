@@ -19,6 +19,39 @@
 ##############################################################
 # Config Filebeat
 ##############################################################
+- name: Copy server CA
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/ssl/certs/logstash_server_pki_int.crt'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+  with_fileglob:
+    - 'conf/tls/root_ca/*.crt'
+  when: client_cert == True
+
+- name: Copy Filebeat client public cert
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/ssl/certs/tor_client.crt'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+  with_fileglob:
+    - 'conf/tls/client_cert/*.crt'
+  when: client_cert == True  
+
+- name: Copy Filebeat client private key
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/ssl/private/tor_client.key'
+    owner: 'root'
+    group: 'root'
+    mode: 0400
+  with_fileglob:
+    - 'conf/tls/client_cert/*.key'
+  when: client_cert == True  
+
 - name: Copy filebeat.yml
   template:
     src: 'conf/filebeat/filebeat.yml'
@@ -27,11 +60,13 @@
     group: 'root'
     mode: 0600
 
-# - name: Copy intermediate certificate
+- name: Verify Filebeat connection to Logstash
+  shell: 'filebeat test output'
+  register: filebeat_tls_check
 
-# - name: Copy Filebeat client public cert
-
-# - name: Copy Filebeat client private key
+- name: Print result of Filebeat TLS check
+  debug:
+    msg: '{{ filebeat_tls_check.stdout_lines }}'
 
 - name: Restart Filebeat
   service:

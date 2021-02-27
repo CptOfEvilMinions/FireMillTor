@@ -19,7 +19,7 @@ ContactInfo holdmybeertor@protonmail.com
 RelayBandwidthRate 20 MB
 RelayBandwidthBurst 50 MB
 AccountingStart day  0:00
-AccountingMax 500 GBytes
+AccountingMax 400 GBytes
 
 
 # Web page that greats a user on port 80 informing they have stumbled on a tor exit node.

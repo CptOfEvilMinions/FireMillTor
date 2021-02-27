@@ -1,6 +1,11 @@
 ########################################################################
 # Setup TOR with Docker
 ########################################################################
+- name: Install Python3 Pip3
+  apt:
+    name: ['python3-pip']
+    state: latest
+
 - name: Install Python Docker
   pip:
     name: ['docker-compose', 'docker']
@@ -58,3 +63,9 @@
     project_name: tor-alpine
     project_src: '/srv/docker/tor'
     build: yes
+
+- name: Verify TOR is running
+  wait_for:
+    port: 9001
+    delay: 10
+  retries: 10

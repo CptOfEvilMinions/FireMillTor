@@ -67,7 +67,6 @@ filebeat.config.inputs:
   path: inputs.d/*.yml
 
 # ============================== Filebeat modules ==============================
-
 filebeat.config.modules:
   # Glob pattern for configuration loading
   path: ${path.config}/modules.d/*.yml
@@ -166,20 +165,26 @@ output.logstash:
   hosts: {{ logstash_server }}
 
   # Enable TLS
-  ssl.enabled: {{ logstash_enable_tls }}
+  ssl.enabled: True
 
+  {% if client_cert == false  %}
   # Disable TLS verification
-  ssl.verification_mode: {{ logstash_tls_verification_mode }}
+  ssl.verification_mode: none
+
+  {% else %}
+  # Disable TLS verification
+  ssl.verification_mode: full
 
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications
-  #ssl.certificate_authorities: ["/etc/ssl/certs/logging_hackinglab_network_pki_int.crt"]
+  ssl.certificate_authorities: ["/etc/ssl/certs/logstash_server_pki_int.crt"]
 
   # Certificate for SSL client authentication
-  #ssl.certificate: "/etc/ssl/certs/tor_clients_logging_hackinglab_network.crt"
+  ssl.certificate: "/etc/ssl/certs/tor_client.crt"
 
   # Client Certificate Key
-  #ssl.key: "/etc/ssl/private/tor_clients_logging_hackinglab_network.key"
+  ssl.key: "/etc/ssl/private/tor_client.key"
+  {% endif %}
 
 # ================================= Processors =================================
 processors:

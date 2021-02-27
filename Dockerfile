@@ -19,5 +19,4 @@ USER tor
 # default port to used for incoming Tor connections
 # can be changed by changing 'ORPort' in torrc
 EXPOSE 9001
-
-CMD ["tor"]
+CMD ["tor","-f","/etc/tor/torrc"]

@@ -3,7 +3,7 @@
 ##################################################################################
 - name: Install software
   apt:
-    name: ['cmake', 'make', 'gcc', 'g++', 'flex', 'bison', 'libpcap-dev', 'libssl-dev', 'python-dev', 'swig', 'zlib1g-dev', 'libmaxminddb-dev','curl', 'libkrb5-dev', 'acl']
+    name: ['cmake', 'make', 'gcc', 'g++', 'flex', 'bison', 'libpcap-dev', 'libssl-dev', 'python3', 'python3-dev', 'swig', 'zlib1g-dev', 'python3-git', 'python3-semantic-version', 'libmaxminddb-dev', 'sendmail', 'curl', 'google-perftools', 'libkrb5-dev']
     state: latest
 
 ##################################################################################
@@ -156,8 +156,8 @@
 
 - name: Copy zeekctl.cfg
   template:
-    src: 'conf/zeek/zeekctl111.cfg'
-    dest: '{{ zeek_dir }}/etc/zeekctl111.cfg'
+    src: 'conf/zeek/zeekctl.cfg'
+    dest: '{{ zeek_dir }}/etc/zeekctl.cfg'
     owner: '{{ zeek_user }}'
     group: '{{ zeek_user }}'
     mode: '0644'
@@ -165,22 +165,6 @@
 #################################################################################
 # Install/Setup Zeek Package Manager
 #################################################################################
-- name: Install Python3 pip
-  apt:
-    name: 'python3-pip'
-    state: latest
-
-- name: Install zkg
-  pip:
-    name: zkg=={{ zkg_version }}
-  environment: 
-    PATH: "{{ ansible_env.PATH }}:{{ zeek_dir }}/bin"
-
-- name: Setup ZKG
-  shell: 'zkg autoconfig'
-  environment: 
-    PATH: "{{ ansible_env.PATH }}:{{ zeek_dir }}/bin"
-
 - name: Install ZKG packages
   shell: 'zkg install --force {{ item }}'
   with_items:
@@ -201,8 +185,12 @@
     line: '{{ item }}'
     create: yes
   with_items:
-    - '# Load ZKG packages'
-    - '@load packages'
+    #- '# Load ZKG packages'
+    #- '@load packages'
+    - '# Disable TSV logging'
+    - 'const JSONStreaming::disable_default_logs = T;'
+    - '# JSON logging - time before rotating a file'
+    - 'const JSONStreaming::rotation_interval = 60mins;'
 
 - name: Replace bro_init() with zeek_init()
   shell: "find {{ zeek_dir }}/share/zeek/site/packages -type f -exec sed -i 's/bro_init()/zeek_init()/g' {} +"

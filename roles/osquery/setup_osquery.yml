@@ -62,3 +62,9 @@
     enabled: yes
     state: restarted
   when: not osquery_filebeat_module_status.stat.exists
+
+- name: Verify Osquery is running and logging
+  wait_for:
+    path: '/var/log/osquery/osqueryd.results.log'
+    delay: 10
+  retries: 10

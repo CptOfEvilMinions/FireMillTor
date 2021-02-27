@@ -1,0 +1,4 @@
+conf/tls/**/*.crt
+conf/tls/**/*.csr
+conf/tls/**/*.key
+group_vars/loggign_tools.yml

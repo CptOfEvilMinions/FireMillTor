@@ -1,31 +1,18 @@
-########################################### Filebeat ###########################################
-filebeat_version: '7.10.0'
-elastic_gpg_key_url: 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
-elastic_repo_url: 'deb https://artifacts.elastic.co/packages/7.x/apt stable main'
-logstash_server: ["logging.hackinglab.network:55044"]
-logstash_enable_tls: true
-logstash_tls_verification_mode: 'none'
-
-########################################### Osquery ###########################################
-osquery_gpg_key: '1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B'
-osquery_repo_url: 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
-
 ########################################### Zeek ###########################################
 zeek_user: 'zeek'
-zeek_version: '3.2.2'
+zeek_version: '4.0.0-rc3'
 zeek_tar_url: 'https://download.zeek.org/zeek-{{ zeek_version }}.tar.gz'
 zeek_dir: '/opt/zeek'
 zeek_build_dir: '/tmp/zeek'
-zkg_version: '2.4.2'
 
 ############################################## PF_RING ##############################################
 pfring_dir: '/opt/pf_ring'
-pfring_version: '7.6.0'
+pfring_version: '7.8.0'
 pfring_tar_url: 'https://github.com/ntop/PF_RING/archive/{{ pfring_version }}.tar.gz'
 
 ############################################## Suricata ##############################################
 suricata_dir: '/tmp/suricata'
-suricata_version: '5.0.3'
+suricata_version: '6.0.1'
 suricata_tar_url: 'https://www.openinfosecfoundation.org/download/suricata-{{ suricata_version }}.tar.gz'
 
 suricata_username: 'suricata'

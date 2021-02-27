@@ -1,16 +1,15 @@
 - hosts: tor
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
   become: yes
   become_user: root
   tasks:
     - include_vars: 'group_vars/sec_tools.yml'
-    #- import_tasks: 'roles/init.yml'
-    #- import_tasks: 'roles/filebeat/setup_filebeat.yml'   # Install Filebeat
-    #- import_tasks: 'roles/osquery/setup_osquery.yml'     # Install Osquery
-    #- import_tasks: 'roles/docker/setup_docker.yml'       # Install Docker
-    #- import_tasks: 'roles/zeek/setup_pf_ring.yml'        # Install pf_ringg
-    #- import_tasks: 'roles/zeek/setup_zeek.yml'           # Instal Zeek compiled with pf_ring
-    #- import_tasks: 'roles/suricata/setup_suricata.yml'   # Instal Suricata compiled with pf_ring
-    #- import_tasks: 'roles/tor/setup_tor_docker.yml'      # Setup TOR with Docker
+    - include_vars: 'group_vars/loggign_tools.yml'
+    - import_tasks: 'roles/init.yml'
+    - import_tasks: 'roles/filebeat/setup_filebeat.yml'   # Install Filebeat
+    - import_tasks: 'roles/osquery/setup_osquery.yml'     # Install Osquery
+    - import_tasks: 'roles/docker/setup_docker.yml'       # Install Docker
+    - import_tasks: 'roles/zeek/setup_pf_ring.yml'        # Install pf_ringg
+    - import_tasks: 'roles/zeek/setup_zeek.yml'           # Instal Zeek compiled with pf_ring
+    - import_tasks: 'roles/suricata/setup_suricata.yml'   # Instal Suricata compiled with pf_ring
+    - import_tasks: 'roles/tor/setup_tor_docker.yml'      # Setup TOR with Docker
     - import_tasks: 'roles/setup_firewall.yml'            # Setup UFW

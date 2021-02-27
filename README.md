@@ -1,5 +1,45 @@
 # FireMillTor
 
+## Setup VPS
+1. Login into root account
+1. `passwd`
+    1. Change password
+1. `adduser <username>`
+1. `usermod -a -G sudo holdmybeertor`
+    1. Create a standard user with `sudo` privileges
+1. Open a new temrinal
+1. `ssh-copy-id <username>@<TOR IP addr>`
+    1. Enter IP addr
+1. `sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config`
+    1. Disable ROOT login via SSH
+1. `sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config`
+    1. Enforce key based auth
+1. `systemctl restart sshd`
+1. `exit`
+1. `ssh <username>@<TOR IP addr>`
+1. `sudo su`
+    1. Enter password
+1. `apt update -y && apt upgrade -y && apt dist-upgrade -y && reboot`
+
+## Setup Ansible playbook
+1. `vim hosts.ini` and add VPS IP address under `[tor]`
+1. `vim group_vars/all.yml` and set:
+    1. `hostname` - Set the hostname of the machine
+    1. `timezone` - Set the timezone for the machine
+    1. `monitoring_interface` - Interface to monitor for network traffic
+1. `cp group_vars/loggign_tools.yml.example group_vars/loggign_tools.yml`
+1. `group_vars/loggign_tools.yml` and set:
+    1. `logstash_server` -  Set to the IP/FQDN of Logstash and port for Beats
+1. If you plan on implementing client certs for Filebeat logging
+    1. Copy client cert to `conf/tls/client_cert`
+    1. Copy client key to `conf/tls/client_cert`
+    1. Copy root CA to `conf/tls/root_ca`
+    1. Set `client_cert` to `True` in `group_vars/loggign_tools.yml`
+1. 
+
+## Run Ansible playbook
+1. `ansible-playbook -i hosts.ini deploy_tor_node.yml -u <username> -K`
+    1. Enter password
 
 ## Supported OSes
 * Ubuntu Server 20.04
@@ -23,7 +63,7 @@
 * [ansible.builtin.systemd – Manage services](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html)
 * [How to add user and group without a password using Ansible?](https://stackoverflow.com/questions/36290485/how-to-add-user-and-group-without-a-password-using-ansible/36371379)
 * [ansible.builtin.copy – Copy files to remote locations](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html)
-* []()
+* [ansible.builtin.wait_for – Waits for a condition before continuing](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_module.html)
 * []()
 * []()
 * []()
@@ -70,6 +110,10 @@
 * [How to run systemd service as specific user and group in Linux](https://www.golinuxcloud.com/run-systemd-service-specific-user-group-linux/)
 * [Installing Zeek 3.1.4 on Ubuntu 20.04](https://www.securitynik.com/2020/06/installing-zeek-314-on-ubuntu-2004.html)
 * [Bro service config](https://github.com/CptOfEvilMinions/FireMillTor/commit/d9a28044ffeea71773a1cd55726b5e9a24d14737#diff-b775f9a5e5dc679ddda19ea38ab567ce6b6a477503d6f6c74564c147c6d635e2)
+* [Zeek (Bro) Network Security Monitor](https://docs.humio.com/docs/security/zeek/)
+* [zeek/scripts/site/local.zeek](https://github.com/zeek/zeek/blob/master/scripts/site/local.zeek)
+* []()
+* []()
 * []()
 * []()
 

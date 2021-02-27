@@ -136,7 +136,6 @@
     dest: '/usr/local/bin/pf_ringctl'
     mode: '750'
     remote_src: yes
-
   when: not pf_ringctl_stat.stat.exists
 
 - name: Stat pf_ring systemed

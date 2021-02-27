@@ -1,0 +1,10 @@
+########################################### Filebeat ###########################################
+filebeat_version: '7.11.1'
+elastic_gpg_key_url: 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
+elastic_repo_url: 'deb https://artifacts.elastic.co/packages/7.x/apt stable main'
+logstash_server: ["<Logstash IP addr>:5044"]
+client_cert: False
+
+########################################### Osquery ###########################################
+osquery_gpg_key: '1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B'
+osquery_repo_url: 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
