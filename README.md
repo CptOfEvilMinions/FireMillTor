@@ -1,4 +1,9 @@
 # FireMillTor
+`DISCLAIMER`
+
+The information contained in this repository(repo) is for educational purposes ONLY! The authors or contributors DO NOT hold any responsibility for any misuse or damage of the information and/or code provided in repo.
+
+`DISCLAIMER`
 
 ## Setup VPS
 1. Login into root account
@@ -65,13 +70,6 @@
 * [ansible.builtin.copy – Copy files to remote locations](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html)
 * [ansible.builtin.wait_for – Waits for a condition before continuing](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_module.html)
 * []()
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
 
 ### Suricata 
 * [apt install linux-headers-$(uname -r) in ansible](https://www.reddit.com/r/ansible/comments/bzdd7q/apt_install_linuxheadersuname_r_in_ansible/)
@@ -95,12 +93,19 @@
 * [Github - hultdin/nsmfoo - 00. Suricata + Barnyard2 + Snorby == True](https://github.com/hultdin/nsmfoo)
 * [nDPI - Quick Start Guide](https://www.ntop.org/wp-content/uploads/2013/12/nDPI_QuickStartGuide.pdf)
 * []()
-* []()
-* []()
-* []()
-* []()
 
 ### Zeek 
+* [Installing Bro IDS on Fedora 25](https://www.vultr.com/docs/installing-bro-ids-on-fedora-25)
+* [BroControl](https://www.bro.org/sphinx/components/broctl/README.html)
+* [How To Install EPEL Repo on a CentOS and RHEL 7.x](https://www.cyberciti.biz/faq/installing-rhel-epel-repo-on-centos-redhat-7-x/)
+* [Writing Bro Plugins](https://www.bro.org/sphinx-git/devel/plugins.html)
+* [extract-all-files.bro](https://www.bro.org/sphinx/scripts/policy/frameworks/files/extract-all-files.bro.html)
+* [stats.bro](https://www.bro.org/sphinx/scripts/policy/misc/stats.bro.html)
+* [Bro Package Manager: list of packages](http://blog.bro.org/2017/06/bro-package-manager-list-of-packages.html)
+* [Detecting Malicious SMB Activity Using Bro](https://www.sans.org/reading-room/whitepapers/detection/detecting-malicious-smb-activity-bro-37472)
+* [MIME Types List](https://www.freeformatter.com/mime-types-list.html)
+* [THREAT HUNTING WITH BRO](https://sqrrl.com/threat-hunting-bro/)
+* [Binary Packages for Bro Releases](https://www.bro.org/download/packages.html)
 * [Zeek - Installing](https://docs.zeek.org/en/current/install/install.html#installing-from-source)
 * [PART 1: INSTALL/SETUP ZEEK + PF_RING ON UBUNTU 18.04 ON PROXMOX 5.3 + OPENVSWITCH](https://holdmybeersecurity.com/2019/04/03/part-1-install-setup-zeek-pf_ring-on-ubuntu-18-04-on-proxmox-5-3-openvswitch/)
 * [Github - CptOfEvilMinions/BlogProjects/suricatav5-pf_ring/roles/setup_pf_ring.yml](https://github.com/CptOfEvilMinions/BlogProjects/blob/master/suricatav5-pf_ring/roles/setup_pf_ring.yml)
@@ -113,35 +118,25 @@
 * [Zeek (Bro) Network Security Monitor](https://docs.humio.com/docs/security/zeek/)
 * [zeek/scripts/site/local.zeek](https://github.com/zeek/zeek/blob/master/scripts/site/local.zeek)
 * []()
-* []()
-* []()
-* []()
 
 ### TOR
-* []()
-* []()
-* []()
-* []()
-* []()
-* []()
+* [Github - Tor config](https://github.com/jgamblin/tor/blob/master/torrc)
+* [How to set up a Tor Exit Node & sniff traffic.](https://medium.com/@omaidfaizyar/how-to-set-up-a-tor-exit-node-sniff-traffic-301fca7548b)
 * []()
 
 ### Osquery
+* [Ansible - yum](https://docs.ansible.com/ansible/latest/modules/yum_module.html)
+* [JSON linter](https://jsonlint.com/)
+* [OSQuery docs - config](https://osquery.readthedocs.io/en/stable/deployment/configuration/)
+* [OSQuery docs - syslog](https://osquery.readthedocs.io/en/stable/deployment/syslog/)
+* [Github - OSQuery syslog issue](https://github.com/facebook/osquery/issues/1964)
 * [Downloading & Installing Osquery](https://osquery.io/downloads/official/4.5.1)
 * [Osquery module](https://www.elastic.co/guide/en/beats/filebeat/7.9/filebeat-module-osquery.html)
-* []()
-* []()
-* []()
-* []()
 * []()
 
 ### Docker 
 * [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 * [community.general.docker_image – Manage docker images](https://docs.ansible.com/ansible/latest/collections/community/general/docker_image_module.html)
-* []()
-* []()
-* []()
-* []()
 * []()
 
 
@@ -153,7 +148,4 @@
 * [Load external configuration files](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-configuration-reloading.html)
 * [Configure inputs](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-filebeat-options.html)
 * [Zeek - Configure Filebeat](https://docs.humio.com/integrations/security-and-incident-management/zeek/)
-* []()
-* []()
-* []()
 * []()
