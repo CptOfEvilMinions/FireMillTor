@@ -8,7 +8,7 @@ RUN apk update && apk add tor
 #RUN addgroup -S tor && adduser -S -G tor tor
 
 # Copy TOR config
-COPY conf/torrc /etc/tor/torrc
+COPY conf/tor/torrc /etc/tor/torrc
 
 # make sure files are owned by tor user
 RUN chown tor -R /etc/tor
